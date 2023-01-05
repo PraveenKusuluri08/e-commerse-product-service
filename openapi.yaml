@@ -1,0 +1,186 @@
+openapi: "3.0.2"
+
+info:
+  title: ECOMMERSE PROJECT MICROSERVICES
+  version: "1.0.0"
+servers:
+  - url: http://localhost:8080/
+
+paths:
+  /category:
+    post:
+      tags:
+        - Category
+      description: This helps to create a category
+      openrationId: CreateCategory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoryBody"
+      responses:
+        "201":
+          description: Category created for the product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryCreateResponse"
+        "404":
+          description: Category Creation Failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryCreationFailure"
+    get:
+      description: To get all the categeries and their products
+      tags:
+        - Category
+      operationId: GetAllCategories
+      responses:
+        "200":  
+          description: Get all categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '500':
+          description: Failed to get the categories and their prodcucts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /category/{id}:
+    get:
+      tags:
+        - Category
+      description: For to get the requested category from the table and based on that query any product is matched getting that record from the database
+      operationId: getCategory
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  # $ref: '#/components/schemas/GetRecord'
+        "500":
+          description: Response Failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    put:
+      tags:
+        - Category
+      description: For to update the category
+      operationId: UpdateCategory
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoryBody"
+      responses:
+        "200":
+          description: Category updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "500":
+          description: Category failed to update
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    
+
+components:
+  schemas:
+    CategoryCreateResponse:
+      type: object
+      description: Used for the seeing the category creation status
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        createdAt:
+          type: string
+        createdBy:
+          type: string
+          default: Praveen
+
+    CategoryCreationFailure:
+      type: object
+      description: Failed to create a category! Some thing went wrong
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    CategoryBody:
+      type: object
+      description: Body to create a category
+      properties:
+        categoryName:
+          type: string
+      required: [categoryName]
+
+    GetRecord:
+      type: object
+      description: Successful response for the single record
+      properties:
+        data:
+          type: object
+          properties:
+            categoryName:
+              type: string
+            id:
+              type: string
+            createAt:
+              type: string
+            itemId:
+              type: string
+            description:
+              type: string
+            price:
+              type: number
+            rating:
+              type: integer
+            category:
+              type: integer
+            images:
+              type: array
+              items:
+                type: string
+            itemName:
+              type: string
