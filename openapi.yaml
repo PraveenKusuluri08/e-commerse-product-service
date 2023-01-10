@@ -1,4 +1,4 @@
-openapi: "3.0.2"
+openapi: "3.0.0"
 
 info:
   title: ECOMMERSE PROJECT MICROSERVICES
@@ -54,7 +54,6 @@ paths:
                 properties:
                   message:
                     type: string
-
   /category/{id}:
     get:
       tags:
@@ -121,6 +120,77 @@ paths:
                 properties:
                   message:
                     type: string
+  
+  /products:
+    post:
+      tags: 
+        - Products
+      description: To create as the admin side
+      operationId: CreateProduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProduct"
+      responses:
+        '201':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Product Failed to create
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /product/imageupload:
+    post:
+      tags:
+        - Products
+      description: Images for the product created
+      operationId: ImageUploadProduct
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: 
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                itemId:
+                  type: string
+      responses:
+        "200":  
+          description: Images are uploaded for the product
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Images are not uploaded for the product
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+              
     
 
 components:
@@ -184,3 +254,21 @@ components:
                 type: string
             itemName:
               type: string
+    
+    CreateProduct:
+      type: object
+      description: Body to create a product
+      properties:
+        itemName:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        discount:
+          type: number
+        rating:
+          type: integer
+        category:
+          type: integer
+        
