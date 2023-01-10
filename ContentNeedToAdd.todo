@@ -1,0 +1,10 @@
+Task for the image upload to the products:
+This is beacuse multipart/form-data is not supported:
+    ☐ First add the multer to the dist generated folder from open api
+    ☐ Go to dist/api/products/index.ts
+        ☐ Import multer their and assign it to the any variable
+        ☐ Add the variable as the middleware to the endpoint line 26 (approximately)
+        ☐ In line 36 (approximately) return {...req.body,...req.files}
+    ☐ Go to dist/api/products/types.ts 
+        ☐ line 19 add the parameters for the request any 
+
