@@ -9,11 +9,11 @@ import cors from "cors"
 import passport from "passport"
 import { Strategy as BearerStrategy } from "passport-http-bearer"
 import session from "express-session"
-import {Strategy} from "passport"
+import path from "path"
 dotenv.config()
 
 import { ServiceUtils } from "./utils/utils"
-const swaggerDocument = YAML.load("../openapi.yaml")
+const swaggerDocument = YAML.load(path.resolve(__dirname,"../openapi.yaml"))
 
 const app = express()
 let impl = new apiImpl()

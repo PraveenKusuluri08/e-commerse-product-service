@@ -69,8 +69,8 @@ export class CategoryImpl implements CategoryApi {
               .split("/")
               .reverse()
               .join("-")
-            let sql = `UPDATE CATEGORIES SET categoryName=?,updateAt=? WHERE ID=?`
-            let data = [request?.categoryName,updatedAt, id]
+            let sql = `UPDATE CATEGORIES SET categoryName=?,subCategory=?,updateAt=? WHERE ID=?`
+            let data = [request?.categoryName,request?.subcategory,updatedAt, id]
             connection.query(sql, data, (err, result) => {
               if (err) return reject(err)
               console.log(result)
@@ -163,6 +163,7 @@ export class CategoryImpl implements CategoryApi {
   ): Promise<PostCategoryResponse> {
     return new Promise<PostCategoryResponse>((resolve, reject) => {
       let categoryName = request?.categoryName
+      let subCategoryName = request?.subcategory
       try {
         utils
           .isUserAdmin(2, "praveenkusuluri08@gmail.com")
@@ -183,6 +184,7 @@ export class CategoryImpl implements CategoryApi {
               let category = {
                 id,
                 categoryName,
+                subCategoryName,
                 createdAt: createdAt.split("/").reverse().join("-"),
               }
               connection.query(sql, category, (err, result) => {

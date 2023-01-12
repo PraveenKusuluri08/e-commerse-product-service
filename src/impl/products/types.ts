@@ -1,3 +1,4 @@
+import { UpdateProduct500Response } from "./../../../dist/api/products/types"
 import {
   CreateProduct201Response,
   CreateProduct500Response,
@@ -6,6 +7,8 @@ import {
   ImageUploadProduct500Response,
   ImageUploadProductResponse,
   ProductsApi,
+  UpdateProduct200Response,
+  UpdateProductResponse,
 } from "../../../dist/api/products/types"
 import { Api } from "../../../dist/models"
 import * as crypto from "crypto"
@@ -13,6 +16,53 @@ import { connection } from "../../dbConection"
 import FormData from "form-data"
 import axios from "axios"
 export class ProductApiImpl implements ProductsApi {
+  async updateProduct(
+    id: string,
+    request: Api.CreateProduct | undefined
+  ): Promise<UpdateProductResponse> {
+    return new Promise<UpdateProductResponse>((resolve, reject) => {
+      try {
+        let sql = `UPDATE products SET itemName=?,description=?, price =?,discount=?,brand=?,category=?,rating=? WHERE itemId='${id}'`
+        let values = [
+          request?.itemName,
+          request?.description,
+          request?.price,
+          request?.discount,
+          request?.brand,
+          request?.category,
+          request?.rating,
+        ]
+        connection.query(sql, values, (err, rows) => {
+          if (err) throw err
+          let res = <UpdateProduct200Response>{
+            status: 200,
+            body: {
+              message: "Product Updated successfully",
+            },
+          }
+          return resolve(res)
+        })
+      } catch (err) {
+        let res = <UpdateProduct500Response>{
+          status: 500,
+          body: {
+            message: "Internal Server Error",
+          },
+        }
+        return resolve(res)
+      }
+    }).catch((err) => {
+      console.log(err)
+      let res = <UpdateProduct500Response>{
+        status: 500,
+        body: {
+          message: "Internal Server Error",
+        },
+      }
+      return res
+    })
+  }
+
   async imageUploadProduct(
     request: Api.ImageUploadProductRequest | any
   ): Promise<ImageUploadProductResponse> {
@@ -45,9 +95,9 @@ export class ProductApiImpl implements ProductsApi {
             }
             console.log("first->", locations)
             let images = JSON.stringify(locations)
-            let sql = `UPDATE products SET images = '${images}'  WHERE itemId='7641382736'`
-            connection.query(sql,locations, (err, rows) => {
-              if (err){
+            let sql = `UPDATE products SET images = '${images}'  WHERE itemId='${request.itemId}'`
+            connection.query(sql, locations, (err, rows) => {
+              if (err) {
                 console.log("err->🥵", err)
               }
               console.log("rows", rows)
@@ -85,7 +135,7 @@ export class ProductApiImpl implements ProductsApi {
         //TODO:Approach
         //TODO:create a product without the images and create a edpoint to update the images using the seperate endpoint
         //TODO:Images would be now the empty array with strings
-        let sql = `INSERT INTO products (itemId,description,price,discount,rating,category,itemName) VALUES(?,?,?,?,?,?,?)`
+        let sql = `INSERT INTO products (itemId,description,price,discount,rating,category,brand,itemName) VALUES(?,?,?,?,?,?,?,?)`
         const values = [
           itemId,
           request?.description,
@@ -93,6 +143,7 @@ export class ProductApiImpl implements ProductsApi {
           request?.discount,
           request?.rating,
           request?.category,
+          request?.brand,
           request?.itemName,
         ]
         connection.query(sql, values, (result) => {
