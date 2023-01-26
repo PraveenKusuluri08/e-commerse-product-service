@@ -1,6 +1,8 @@
 FROM node:16-alpine
 
-WORKDIR /usr/ecommerse/server
+RUN MKDIR -p /usr/ecommerse/products 
+
+WORKDIR /usr/ecommerse/products/
 
 COPY package.json ./
 
@@ -11,6 +13,5 @@ COPY . .
 RUN npm run build
 
 EXPOSE 8080
-
 
 CMD ["node","start"]

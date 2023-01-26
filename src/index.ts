@@ -13,7 +13,7 @@ import path from "path"
 dotenv.config()
 
 import { ServiceUtils } from "./utils/utils"
-const swaggerDocument = YAML.load(path.resolve(__dirname,"../openapi.yaml"))
+const swaggerDocument = YAML.load(path.resolve(__dirname,"../../openapi.yaml"))
 
 const app = express()
 let impl = new apiImpl()

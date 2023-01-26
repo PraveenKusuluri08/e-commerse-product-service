@@ -3,6 +3,7 @@ import { PostCategoryResponse } from "../../dist/api/category/types"
 import { connection } from "../dbConection"
 import { IVerifyOptions } from "passport-http-bearer"
 import { verify } from "jsonwebtoken"
+import qrcode from "qrcode"
 interface UtilsFunctions {
   isUserAdmin(
     role: number,
@@ -48,15 +49,15 @@ export class ServiceUtils implements UtilsFunctions {
       }
     })
   }
-  async chekRowExistsOrNot(id:number):Promise<any> {
-    return new Promise((resolve,reject)=>{
-      try{
+  async chekRowExistsOrNot(id: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      try {
         let sql = `SELECT COUNT(*) FROM CATEGORIES WHERE ID=${id}`
-        connection.query(sql,(err,result)=>{
-          if(err) throw err
+        connection.query(sql, (err, result) => {
+          if (err) throw err
           resolve(result)
         })
-      }catch(err) {
+      } catch (err) {
         console.log(err)
         return reject(err)
       }
@@ -76,6 +77,34 @@ export class ServiceUtils implements UtilsFunctions {
       return
     }
     let decoded = verify(token, "ecommerse_scecret")
-    done(null,decoded)
+    done(null, decoded)
+  }
+  static async generate_qr_code(product_id: string) {
+    return new Promise((resolve, reject) => {
+      qrcode.toString(product_id, { type: "terminal" }, (err, url) => {
+        if (err) {
+          return reject(err)
+        }
+        console.log(url)
+        return resolve(url)
+      })
+    }).catch((err) => {
+      console.log(err)
+      throw err
+    })
+  }
+  static async generate_sku(
+    itemName: string,
+    itemId: string,
+    category_id: number
+  ) {
+    let productNameSku = itemName.slice(0, 3)
+    let itemIdSku = itemId.slice(0, 3)
+    return Math.random().toString(30).substring(2, 4).toUpperCase() +
+      "-" +
+      `${productNameSku}-` +
+      `${itemIdSku}-` +
+      `${category_id}-` +
+      Math.random().toString(15).substring(2, 12).toUpperCase()
   }
 }

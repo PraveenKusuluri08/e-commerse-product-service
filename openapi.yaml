@@ -37,7 +37,7 @@ paths:
         - Category
       operationId: GetAllCategories
       responses:
-        "200":  
+        "200":
           description: Get all categories
           content:
             application/json:
@@ -45,7 +45,7 @@ paths:
                 type: array
                 items:
                   type: string
-        '500':
+        "500":
           description: Failed to get the categories and their prodcucts
           content:
             application/json:
@@ -120,10 +120,10 @@ paths:
                 properties:
                   message:
                     type: string
-  
+
   /products:
     post:
-      tags: 
+      tags:
         - Products
       description: To create as the admin side
       operationId: CreateProduct
@@ -133,7 +133,7 @@ paths:
             schema:
               $ref: "#/components/schemas/CreateProduct"
       responses:
-        '201':
+        "201":
           description: Product created successfully
           content:
             application/json:
@@ -142,7 +142,7 @@ paths:
                 properties:
                   message:
                     type: string
-        '500':
+        "500":
           description: Product Failed to create
           content:
             application/json:
@@ -151,6 +151,45 @@ paths:
                 properties:
                   message:
                     type: string
+  /product/{id}:
+    put:
+      tags:
+        - Products
+      
+      description: Update Product
+      operationId: UpdateProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Body for to update the product
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProduct"
+      responses:
+        "200":
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "500":
+          description: Product Failed to Update
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
   /product/imageupload:
     post:
       tags:
@@ -163,7 +202,7 @@ paths:
           multipart/form-data:
             schema:
               type: object
-              required: 
+              required:
                 - file
               properties:
                 file:
@@ -172,7 +211,7 @@ paths:
                 itemId:
                   type: string
       responses:
-        "200":  
+        "200":
           description: Images are uploaded for the product
           content:
             application/json:
@@ -181,17 +220,15 @@ paths:
                 properties:
                   message:
                     type: string
-        '500':
+        "500":
           description: Images are not uploaded for the product
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  message: 
+                  message:
                     type: string
-              
-    
 
 components:
   schemas:
@@ -223,7 +260,9 @@ components:
       properties:
         categoryName:
           type: string
-      required: [categoryName]
+        subcategory:
+          type: string
+      required: [categoryName,subcategory]
 
     GetRecord:
       type: object
@@ -254,7 +293,7 @@ components:
                 type: string
             itemName:
               type: string
-    
+
     CreateProduct:
       type: object
       description: Body to create a product
@@ -265,10 +304,12 @@ components:
           type: string
         price:
           type: number
-        discount:
+        discount_id:
           type: number
         rating:
           type: integer
-        category:
+        category_id:
           type: integer
+        inventory_id:
+          type: string
         
