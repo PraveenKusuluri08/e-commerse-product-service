@@ -3,3 +3,7 @@ node_modules
 ts_dist
 
 dist
+
+server.env
+
+.env

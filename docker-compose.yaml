@@ -1,0 +1,46 @@
+version: '3.8'
+services:
+  redis:
+    container_name: redis
+    image: redis:latest
+    restart: unless-stopped
+    # command: ["redis-server", "/etc/redis/redis.conf"]
+    ports:
+      - 6379
+    # volumes:
+    #   - ./redis.conf:/etc/redis/redis.conf
+
+  mysqlDB:
+    image: mysql
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - MY_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE=$MYSQL_DATABASE
+    ports:
+      - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
+    volumes:
+      - db:/var/lib/mysql
+    
+  backend:
+    depends_on: 
+      - redis
+      - mysqlDB
+    working_dir: /Products
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+    environment:
+      - DB_HOST=mysqlDB
+      - DB_USER=$MYSQLDB_USER
+      - DB_PASSWORD=$MYSQL_ROOT_PASSWORD
+      - DB_NAME=$MYSQLDB_DATABASE
+      - DB_PORT=$MYSQLDB_DOCKER_PORT
+      - redis_server_addr= redis
+    stdin_open: true
+    build: ./
+    tty: true
+    
+volumes:
+  db: 
