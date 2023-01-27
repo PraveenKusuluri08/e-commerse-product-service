@@ -13,7 +13,7 @@ services:
   mysqlDB:
     image: mysql
     restart: unless-stopped
-    env_file: ./.env
+    # env_file: ./.env
     environment:
       - MY_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
       - MYSQL_DATABASE=$MYSQLDB_DATABASE
@@ -29,7 +29,7 @@ services:
       - mysqlDB
     working_dir: /Products
     restart: unless-stopped
-    env_file: ./.env
+    # env_file: ./.env
     ports:
       - 8080:8080
       # - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
