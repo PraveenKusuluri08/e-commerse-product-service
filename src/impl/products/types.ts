@@ -15,6 +15,7 @@ import * as crypto from "crypto"
 import { connection } from "../../dbConection"
 import FormData from "form-data"
 import axios from "axios"
+import { ServiceUtils } from "../../utils/utils"
 export class ProductApiImpl implements ProductsApi {
   async updateProduct(
     id: string,
@@ -22,15 +23,15 @@ export class ProductApiImpl implements ProductsApi {
   ): Promise<UpdateProductResponse> {
     return new Promise<UpdateProductResponse>((resolve, reject) => {
       try {
-        let sql = `UPDATE products SET itemName=?,description=?, price =?,discount=?,brand=?,category=?,rating=? WHERE itemId='${id}'`
+        let sql = `UPDATE products SET itemName=?,description=?, price =?,discount_id=?,rating=?,category_id=?,inventory_id=? WHERE itemId='${id}'`
         let values = [
           request?.itemName,
           request?.description,
           request?.price,
-          request?.discount,
-          request?.brand,
-          request?.category,
+          request?.discount_id,
           request?.rating,
+          request?.category_id,
+          request?.inventory_id,
         ]
         connection.query(sql, values, (err, rows) => {
           if (err) throw err
@@ -128,23 +129,32 @@ export class ProductApiImpl implements ProductsApi {
   async createProduct(
     request: Api.CreateProduct | undefined
   ): Promise<CreateProductResponse> {
-    return new Promise<CreateProductResponse>((resolve, reject) => {
+    return new Promise<CreateProductResponse>(async (resolve, reject) => {
       try {
         //TODO:Need to use the image upload endpoint which is deployed to lambda
         const itemId = crypto.randomBytes(5).toString("hex").toUpperCase()
         //TODO:Approach
         //TODO:create a product without the images and create a edpoint to update the images using the seperate endpoint
         //TODO:Images would be now the empty array with strings
-        let sql = `INSERT INTO products (itemId,description,price,discount,rating,category,brand,itemName) VALUES(?,?,?,?,?,?,?,?)`
+        //TODO: Generted SKU and Generated QR codes store in the sql table
+        const SKU = await ServiceUtils.generate_sku(
+          request?.itemName ?? "PRD",
+          itemId,
+          request?.category_id ?? 0
+        )
+        const qrCode = await ServiceUtils.generate_qr_code(itemId)
+        let sql = `INSERT INTO products (itemId,itemName,description,SKU,price,discount_id,rating,category_id,inventory_id,qr_code) VALUES(?,?,?,?,?,?,?,?,?,?)`
         const values = [
           itemId,
-          request?.description,
-          request?.price,
-          request?.discount,
-          request?.rating,
-          request?.category,
-          request?.brand,
           request?.itemName,
+          request?.description,
+          SKU,
+          request?.price,
+          request?.discount_id,
+          request?.rating,
+          request?.category_id,
+          request?.inventory_id,
+          qrCode,
         ]
         connection.query(sql, values, (result) => {
           console.log(result)

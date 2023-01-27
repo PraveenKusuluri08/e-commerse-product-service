@@ -178,14 +178,13 @@ export class CategoryImpl implements CategoryApi {
               if (count == 0) {
                 return reject(new Error("Something went wrong!"))
               }
-              let id = Math.floor(Math.random() * 50 + 1)
               let createdAt = new Date().toLocaleDateString()
               let sql = `INSERT INTO CATEGORIES SET ?`
               let category = {
-                id,
                 categoryName,
                 subCategoryName,
                 createdAt: createdAt.split("/").reverse().join("-"),
+                updatedAt: createdAt.split("/").reverse().join("-")
               }
               connection.query(sql, category, (err, result) => {
                 if (err) throw err
