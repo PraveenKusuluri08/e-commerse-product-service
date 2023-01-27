@@ -19,7 +19,7 @@ services:
       - MYSQL_DATABASE=$MYSQLDB_DATABASE
     ports:
       - 3307:3306
-      - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
+      # - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
     volumes:
       - db:/var/lib/mysql
     
@@ -32,7 +32,7 @@ services:
     env_file: ./.env
     ports:
       - 8080:8080
-      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+      # - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
     environment:
       - DB_HOST=mysqlDB
       - DB_USER=$MYSQLDB_USER
