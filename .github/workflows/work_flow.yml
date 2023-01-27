@@ -9,7 +9,7 @@ jobs:
     name: Run test
     runs-on: ubuntu-latest
     env:
-      COMPOSE_FILE: ../docker-compose.yaml
+      COMPOSE_FILE: ./docker-compose.yaml
       DOCKER_USER: ${{secrets.DOCKER_USER}}
       DOCKER_PASS: ${{secrets.DOCKER_PASSWORD}}
     
