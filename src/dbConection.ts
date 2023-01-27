@@ -2,6 +2,7 @@ import mysql from "mysql2"
 import * as redis from "redis"
 import Redis from "ioredis"
 import {dbConfig} from "./dbConfig"
+import { createLogicalAnd } from "typescript"
 let client_ioredis = new Redis()
 
 
@@ -36,6 +37,9 @@ client.on("error",(err)=>{
   client.disconnect()
   throw new Error("Failed to connect to the redis server")
 
+})
+client_ioredis.on("error",(err)=>{
+  console.log(err);
 })
 
 let pipeline = client_ioredis.pipeline()
