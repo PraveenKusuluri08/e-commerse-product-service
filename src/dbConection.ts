@@ -1,20 +1,25 @@
 import mysql from "mysql2"
-import {createClient} from "redis"
+import * as redis from "redis"
 import Redis from "ioredis"
+import {dbConfig} from "./dbConfig"
+import { createLogicalAnd } from "typescript"
 let client_ioredis = new Redis()
+
+
 let connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "Praveen@8919296298",
-  port: 3306,
-  database: "ecommerse",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  port: dbConfig.PORT,
+  database:dbConfig.DB,
 })
 connection.connect((err) => {
   err ? console.log(err) : console.log("Connected to mysql db")
 })
 
-let client = createClient()
-
+const client = redis.createClient({
+  url: 'redis://redis:6379'
+  });
 client.on("error", (err) => {
   console.log("Failed to connec the redus server", err)
   client.disconnect()
@@ -26,11 +31,15 @@ client.connect().then(() => {
   console.log("Redis server is connected")
 })
 
-client_ioredis.on("error",(err)=>{
+client.on("error",(err)=>{
   console.log(err)
   client_ioredis.disconnect()
+  client.disconnect()
   throw new Error("Failed to connect to the redis server")
 
+})
+client_ioredis.on("error",(err)=>{
+  console.log(err);
 })
 
 let pipeline = client_ioredis.pipeline()

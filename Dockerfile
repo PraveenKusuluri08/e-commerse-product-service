@@ -1,17 +1,15 @@
 FROM node:16-alpine
 
-RUN MKDIR -p /usr/ecommerse/products 
-
-WORKDIR /usr/ecommerse/products/
+WORKDIR /Products
 
 COPY package.json ./
 
-RUN npm install
+RUN npm install --force
 
 COPY . .
 
 RUN npm run build
 
-EXPOSE 8080
+ENV PORT = 8080
 
-CMD ["node","start"]
+CMD ["npm","start"]

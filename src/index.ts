@@ -10,7 +10,7 @@ import passport from "passport"
 import { Strategy as BearerStrategy } from "passport-http-bearer"
 import session from "express-session"
 import path from "path"
-dotenv.config()
+dotenv.config({path:path.resolve(__dirname,"../../server.env")})
 
 import { ServiceUtils } from "./utils/utils"
 const swaggerDocument = YAML.load(path.resolve(__dirname,"../../openapi.yaml"))
@@ -52,7 +52,7 @@ app.use(
 )
 categoryServiceApi(app, impl)
 
-const PORT = process.env.PORT || 8080
+const PORT = process.env.PORT || 9000
 
 app.listen(PORT, () => {
   console.log(`App is listing on port ${PORT}`)
